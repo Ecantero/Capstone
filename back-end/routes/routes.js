@@ -42,12 +42,28 @@ exports.checkAccess = (req, res) => {
   });
 };
 
-exports.index = (req, res) => {
+exports.home = (req, res) => {
   //
+  res.render("home", {
+    title: "Home",
+    config: config,
+  });
 };
 
-exports.login = (req, res) => {
+exports.jobListings = (req, res) => {
   //
+  res.render("jobListings", {
+    title: "JobListings",
+    config: config,
+  });
+};
+
+exports.search = (res, req) => {
+  //
+  res.render("search", {
+    title: "Search",
+    config: config,
+  });
 };
 
 exports.logout = (req, res) => {
@@ -62,14 +78,48 @@ exports.logout = (req, res) => {
 
 exports.signUp = (req, res) => {
   //
+  res.render("signUp", {
+    title: "SignUp",
+    config: config,
+  });
 };
 
 exports.edit = (req, res) => {
   //
+  User.findById(req.params.id, (err, person) => {
+    if (err) return console.error(err);
+    console.log("person id : " + person.name);
+    console.log("allowed: " + allowed);
+    if (person.name == allowed) {
+      res.render("edit", {
+        title: "EditProfile",
+        person: person,
+        config: config,
+      });
+    } else {
+      res.redirect("/");
+    }
+  });
 };
 
 exports.editPerson = (req, res) => {
   //
+  User.findById(req.params.id, (err, person) => {
+    console.log("edit person");
+    if (err) return console.error(err);
+    person.name = req.body.username;
+    person.age = req.body.age;
+    person.email = req.body.email;
+    if (req.body.password && req.body.password != "") {
+      var pass = hashPassword(req.body.password);
+      person.password = pass;
+    }
+    person.save((err, person) => {
+      if (err) return console.error(err);
+      console.log(req.body.username + " updated");
+    });
+  });
+  res.redirect("/");
 };
 
 exports.delete = (req, res) => {
