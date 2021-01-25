@@ -1,5 +1,4 @@
 var mongoose = require("mongoose");
-const config = require("../config");
 mongoose.Promise = global.Promise;
 mongoose.connect("mongodb://localhost/data", { useNewUrlParser: true });
 const bcrypt = require("bcrypt-nodejs");
@@ -10,34 +9,47 @@ var mdb = mongoose.connection;
 mdb.on("error", console.error.bind(console, "connection error:"));
 mdb.once("open", (callback) => {});
 
-var userSchema = mongoose.Schema({
+var employeeSchema = mongoose.Schema({
   name: String,
   age: String,
   email: String,
   password: String,
+  skills: [String],
 });
 
-var User = mongoose.model("user_collection", userSchema);
+var Employee = mongoose.model("employee_collection", employeeSchema);
+
+var employerSchema = mongoose.Schema({
+  name: String,
+  email: String,
+  password: String,
+  company: String,
+});
+
+var Employer = mongoose.model("employer_collection", employerSchema);
 
 exports.checkAccess = (req, res) => {
-  if (req.body.username == "" || req.body.password == null) {
-    res.redirect("/login");
+  if (req.body.name == "" || req.body.password == null) {
+    res.redirect("/home");
+    req.session.msg = "Must enter all the appropriate information";
   }
-  let userName = req.body.username;
+  let userName = req.body.name;
   let userPassword = req.body.password;
 
-  User.findOne({ name: userName }, (err, person) => {
+  Employee.findOne({ name: userName }, (err, person) => {
     if (err) return console.error(err);
     let isPassMatch = bcrypt.compareSync(userPassword, person.password);
     if (isPassMatch) {
       req.session.user = {
         isAuthenticated: true,
-        username: req.body.username,
+        username: req.body.name,
       };
       allowed = userName;
-      res.redirect("/");
+      req.session.msg = "Succes";
+      res.redirect("/home");
     } else {
-      res.redirect("/login");
+      req.session.err = "No such user exists, create the account here"
+      res.redirect("/signUp");
     }
   });
 };
@@ -46,7 +58,20 @@ exports.home = (req, res) => {
   //
   res.render("home", {
     title: "Home",
-    config: config,
+    msg: req.session.msg,
+  });
+  delete req.session.msg;
+};
+
+exports.about = (req, res) => {
+  res.render("about", {
+    title: "About",
+  });
+};
+
+exports.userAcc = (req, res) => {
+  res.render("userAcc", {
+    title: "User",
   });
 };
 
@@ -54,7 +79,6 @@ exports.jobListings = (req, res) => {
   //
   res.render("jobListings", {
     title: "JobListings",
-    config: config,
   });
 };
 
@@ -62,7 +86,6 @@ exports.search = (res, req) => {
   //
   res.render("search", {
     title: "Search",
-    config: config,
   });
 };
 
@@ -80,13 +103,33 @@ exports.signUp = (req, res) => {
   //
   res.render("signUp", {
     title: "SignUp",
-    config: config,
+    err: req.session.err,
   });
+  delete req.session.err;
+};
+
+let hashPassword = passwordStr => {
+  return bcrypt.hashSync(passwordStr);
+};
+
+exports.createPerson = (req, res) => {
+  var pass = hashPassword(req.body.password);
+  const person = new Employee({
+    name: req.body.name,
+    age: req.body.age,
+    email: req.body.email,
+    password: pass,
+  });
+  person.save((err, person) => {
+    if (err) return console.error(err);
+    console.log(req.body.name + " added");
+  });
+  res.redirect("/home");
 };
 
 exports.edit = (req, res) => {
   //
-  User.findById(req.params.id, (err, person) => {
+  Employee.findById(req.params.id, (err, person) => {
     if (err) return console.error(err);
     console.log("person id : " + person.name);
     console.log("allowed: " + allowed);
@@ -94,7 +137,6 @@ exports.edit = (req, res) => {
       res.render("edit", {
         title: "EditProfile",
         person: person,
-        config: config,
       });
     } else {
       res.redirect("/");
@@ -104,10 +146,10 @@ exports.edit = (req, res) => {
 
 exports.editPerson = (req, res) => {
   //
-  User.findById(req.params.id, (err, person) => {
+  Employee.findById(req.params.id, (err, person) => {
     console.log("edit person");
     if (err) return console.error(err);
-    person.name = req.body.username;
+    person.name = req.body.name;
     person.age = req.body.age;
     person.email = req.body.email;
     if (req.body.password && req.body.password != "") {
@@ -116,7 +158,7 @@ exports.editPerson = (req, res) => {
     }
     person.save((err, person) => {
       if (err) return console.error(err);
-      console.log(req.body.username + " updated");
+      console.log(req.body.name + " updated");
     });
   });
   res.redirect("/");
