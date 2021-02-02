@@ -60,7 +60,8 @@ app.get("/edit/:id", routes.edit);
 app.post("/edit/:id", routes.editPerson);
 
 app.get("/signUp", routes.signUp);
-app.post("/signUp", routes.createPerson);
+app.post("/signUp/emp", routes.createEmp);
+app.post("/signUp/empr", routes.createEmpr);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

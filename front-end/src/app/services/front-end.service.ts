@@ -10,16 +10,28 @@ const baseUrl = 'http://localhost:3000';
 export class FrontEndService {
   constructor(private http: HttpClient) {}
 
-  get(id: any): Observable<any> {
-    return this.http.get(`${baseUrl}/${id}`);
+  getAll(): Observable<any> {
+    return this.http.get(`${baseUrl}/search`);
   }
 
-  create(data: any): Observable<any> {
-    return this.http.post(`${baseUrl}/signUp`, data);
+  get(id: any): Observable<any> {
+    return this.http.get(`${baseUrl}/user/${id}`);
+  }
+
+  findByTitle(id: any): Observable<any> {
+    return this.http.get(`${baseUrl}/search`);
+  }
+
+  createEmp(data: any): Observable<any> {
+    return this.http.post(`${baseUrl}/signUp/emp`, data);
+  }
+
+  createEmpr(data: any): Observable<any> {
+    return this.http.post(`${baseUrl}/signUp/empr`, data);
   }
 
   update(id: any, data: any): Observable<any> {
-    return this.http.put(`${baseUrl}/${id}`, data);
+    return this.http.put(`${baseUrl}/edit/${id}`, data);
   }
 
   delete(id: any): Observable<any> {

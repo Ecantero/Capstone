@@ -21,12 +21,20 @@ var Employee = mongoose.model("employee_collection", employeeSchema);
 
 var employerSchema = mongoose.Schema({
   name: String,
+  age: String,
   email: String,
   password: String,
   company: String,
 });
 
 var Employer = mongoose.model("employer_collection", employerSchema);
+
+var peopleSchema = mongoose.Schema({
+  employee: employeeSchema,
+  employer: employerSchema,
+});
+
+var People = mongoose.model("emp_empr_collection", peopleSchema);
 
 exports.checkAccess = (req, res) => {
   if (req.body.name == "" || req.body.password == null) {
@@ -48,7 +56,7 @@ exports.checkAccess = (req, res) => {
       req.session.msg = "Succes";
       res.redirect("/home");
     } else {
-      req.session.err = "No such user exists, create the account here"
+      req.session.err = "No such user exists, create the account here";
       res.redirect("/signUp");
     }
   });
@@ -83,10 +91,24 @@ exports.jobListings = (req, res) => {
 };
 
 exports.search = (res, req) => {
-  //
-  res.render("search", {
-    title: "Search",
-  });
+  const name = req.query.name;
+  var condition = name
+    ? { name: { $regex: new RegExp(title), $options: "i" } }
+    : {};
+
+  Tutorial.find(condition)
+    .then((data) => {
+      res.send(data);
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message:
+          err.message || "Some error occurred while retrieving tutorials.",
+      });
+    });
+  // res.render("search", {
+  //   title: "Search",
+  // });
 };
 
 exports.logout = (req, res) => {
@@ -108,23 +130,73 @@ exports.signUp = (req, res) => {
   delete req.session.err;
 };
 
-let hashPassword = passwordStr => {
+let hashPassword = (passwordStr) => {
   return bcrypt.hashSync(passwordStr);
 };
 
-exports.createPerson = (req, res) => {
+exports.createEmp = (req, res) => {
   var pass = hashPassword(req.body.password);
-  const person = new Employee({
+  const employee = new Employee({
     name: req.body.name,
     age: req.body.age,
     email: req.body.email,
     password: pass,
+    skills: req.body.skills,
+  });
+  employee.save((err, emp) => {
+    if (err) return console.error(err);
+    console.log(emp);
+    console.log(req.body.name + " added");
+  });
+  const person = new People({
+    employee: employee,
   });
   person.save((err, person) => {
     if (err) return console.error(err);
-    console.log(req.body.name + " added");
+    console.log(person);
+    console.log(req.body.name + " is added to the main collection");
   });
   res.redirect("/home");
+};
+
+exports.createEmpr = (req, res) => {
+  var pass = hashPassword(req.body.password);
+  const employer = new Employer({
+    name: req.body.name,
+    age: req.body.age,
+    email: req.body.email,
+    password: pass,
+    company: req.body.company,
+  });
+  employer.save((err, person) => {
+    if (err) return console.error(err);
+    console.log(req.body.name + " added");
+  });
+  const person = new People({
+    employer: employer,
+  });
+  person.save((err, person) => {
+    if (err) return console.error(err);
+    console.log(person);
+    console.log(req.body.name + " is added to the main collection");
+  });
+  res.redirect("/home");
+};
+
+exports.findOne = (req, res) => {
+  const id = req.params.id;
+
+  Employee.findById(id)
+    .then((data) => {
+      if (!data)
+        res.status(404).send({ message: "Not found Tutorial with id " + id });
+      else res.send(data);
+    })
+    .catch((err) => {
+      res
+        .status(500)
+        .send({ message: "Error retrieving Tutorial with id=" + id });
+    });
 };
 
 exports.edit = (req, res) => {
