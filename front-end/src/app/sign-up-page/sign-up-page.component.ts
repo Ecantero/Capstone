@@ -12,7 +12,7 @@ export class SignUpPageComponent implements OnInit {
     age: 0,
     email: '',
     password: '',
-  }
+  };
 
   employee = {
     skills: [],
@@ -81,7 +81,4 @@ export class SignUpPageComponent implements OnInit {
     );
   }
 
-  newEmp(): void {
-    //
-  }
 }

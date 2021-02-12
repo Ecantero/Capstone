@@ -1,6 +1,20 @@
 var mongoose = require("mongoose");
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost/data", { useNewUrlParser: true });
+mongoose
+  .connect(
+    "mongodb+srv://Admin:Develop33@capstone-project.zyhqb.mongodb.net/data",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
+  .then(() => {
+    console.log("Connection to the database is successful");
+  })
+  .catch((err) => {
+    console.log("Unabled to make Connection", err);
+    process.exit();
+  });
 const bcrypt = require("bcrypt-nodejs");
 
 var allowed;
@@ -17,6 +31,12 @@ var employeeSchema = mongoose.Schema({
   skills: [String],
 });
 
+employeeSchema.method("toJSON", function () {
+  const { __v, _id, ...object } = this.toObject();
+  object.id = _id;
+  return object;
+});
+
 var Employee = mongoose.model("employee_collection", employeeSchema);
 
 var employerSchema = mongoose.Schema({
@@ -27,6 +47,12 @@ var employerSchema = mongoose.Schema({
   company: String,
 });
 
+employerSchema.method("toJSON", function () {
+  const { __v, _id, ...object } = this.toObject();
+  object.id = _id;
+  return object;
+});
+
 var Employer = mongoose.model("employer_collection", employerSchema);
 
 var peopleSchema = mongoose.Schema({
@@ -35,6 +61,14 @@ var peopleSchema = mongoose.Schema({
 });
 
 var People = mongoose.model("emp_empr_collection", peopleSchema);
+
+var jobList = mongoose.Schema({
+  title: String,
+  desc: String,
+  employer: String,
+});
+
+var Jobs = mongoose.model("jobs_list_collection", jobList);
 
 exports.checkAccess = (req, res) => {
   if (req.body.name == "" || req.body.password == null) {
@@ -96,19 +130,18 @@ exports.search = (res, req) => {
     ? { name: { $regex: new RegExp(title), $options: "i" } }
     : {};
 
-  Tutorial.find(condition)
+  Employee.find(condition)
     .then((data) => {
       res.send(data);
     })
     .catch((err) => {
       res.status(500).send({
-        message:
-          err.message || "Some error occurred while retrieving tutorials.",
+        message: err.message || "Error has occurred",
       });
     });
-  // res.render("search", {
-  //   title: "Search",
-  // });
+  res.render("search", {
+    title: "Search",
+  });
 };
 
 exports.logout = (req, res) => {
@@ -156,7 +189,6 @@ exports.createEmp = (req, res) => {
     console.log(person);
     console.log(req.body.name + " is added to the main collection");
   });
-  res.redirect("/home");
 };
 
 exports.createEmpr = (req, res) => {
@@ -180,22 +212,21 @@ exports.createEmpr = (req, res) => {
     console.log(person);
     console.log(req.body.name + " is added to the main collection");
   });
-  res.redirect("/home");
 };
 
-exports.findOne = (req, res) => {
+exports.findUser = (req, res) => {
   const id = req.params.id;
 
-  Employee.findById(id)
+  People.findById(id)
     .then((data) => {
       if (!data)
-        res.status(404).send({ message: "Not found Tutorial with id " + id });
+        res.status(404).send({ message: "Unable to find user with id " + id });
       else res.send(data);
     })
     .catch((err) => {
       res
         .status(500)
-        .send({ message: "Error retrieving Tutorial with id=" + id });
+        .send({ message: "Error retrieving user with id=" + id });
     });
 };
 
@@ -216,23 +247,29 @@ exports.edit = (req, res) => {
   });
 };
 
-exports.editPerson = (req, res) => {
-  //
-  Employee.findById(req.params.id, (err, person) => {
-    console.log("edit person");
-    if (err) return console.error(err);
-    person.name = req.body.name;
-    person.age = req.body.age;
-    person.email = req.body.email;
-    if (req.body.password && req.body.password != "") {
-      var pass = hashPassword(req.body.password);
-      person.password = pass;
-    }
-    person.save((err, person) => {
-      if (err) return console.error(err);
-      console.log(req.body.name + " updated");
+exports.editEmployee = (req, res) => {
+  if (!req.body) {
+    return res.status(400).send({
+      message: "Data to update can not be empty!",
     });
-  });
+  }
+
+  const id = req.params.id;
+
+  Employee.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+    .then((data) => {
+      if (!data) {
+        res.status(404).send({
+          message: `Cannot update Employee with id=${id}.`,
+        });
+      } else res.send({ message: "Employee was updated successfully." });
+    })
+    .catch((err) => {
+      res.status(500).send({
+        message: "Error updating Employee with id=" + id,
+      });
+    });
+  //
   res.redirect("/");
 };
 
