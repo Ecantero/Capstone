@@ -65,7 +65,7 @@ var People = mongoose.model("emp_empr_collection", peopleSchema);
 var jobList = mongoose.Schema({
   title: String,
   desc: String,
-  employer: String,
+  name: String,
 });
 
 var Jobs = mongoose.model("jobs_list_collection", jobList);
@@ -124,21 +124,20 @@ exports.jobListings = (req, res) => {
   });
 };
 
-exports.search = (res, req) => {
-  const name = req.query.name;
-  var condition = name
-    ? { name: { $regex: new RegExp(title), $options: "i" } }
-    : {};
+exports.search = (req, res) => {
+  // const name = req.query.name;
+  // var condition = name
+  //   ? { name: { $regex: new RegExp(title), $options: "i" } }
+  //   : {};
 
-  Employee.find(condition)
-    .then((data) => {
-      res.send(data);
-    })
-    .catch((err) => {
-      res.status(500).send({
-        message: err.message || "Error has occurred",
-      });
-    });
+  Employee.find((err, person) => {
+    res.send(person);
+  }).catch((err) => {
+    // res.status(500).send({
+    //   message: err.message || "Error has occurred",
+    // });
+    console.log(err);
+  });
   res.render("search", {
     title: "Search",
   });
@@ -149,7 +148,8 @@ exports.logout = (req, res) => {
     if (err) {
       console.log(err);
     } else {
-      res.redirect("/");
+      console.log("logout successful");
+      // res.redirect("/");
     }
   });
 };
@@ -214,6 +214,18 @@ exports.createEmpr = (req, res) => {
   });
 };
 
+exports.createJob = (req, res) => {
+  const job = new Jobs({
+    title: req.body.title,
+    desc: req.body.desc,
+    name: req.body.name
+  });
+  job.save((err, jobPost) => {
+    if (err) return console.error(err);
+    console.log(req.body.name + " added");
+  });
+}
+
 exports.findUser = (req, res) => {
   const id = req.params.id;
 
@@ -224,9 +236,7 @@ exports.findUser = (req, res) => {
       else res.send(data);
     })
     .catch((err) => {
-      res
-        .status(500)
-        .send({ message: "Error retrieving user with id=" + id });
+      res.status(500).send({ message: "Error retrieving user with id=" + id });
     });
 };
 
@@ -270,7 +280,7 @@ exports.editEmployee = (req, res) => {
       });
     });
   //
-  res.redirect("/");
+  // res.redirect("/");
 };
 
 exports.delete = (req, res) => {

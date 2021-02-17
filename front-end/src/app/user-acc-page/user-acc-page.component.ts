@@ -9,7 +9,15 @@ import { SignUpPageComponent } from '../sign-up-page/sign-up-page.component';
 })
 export class UserAccPageComponent implements OnInit {
   user: any;
-  name = SignUpPageComponent.name;
+  name = SignUpPageComponent.username;
+  isEmployee = SignUpPageComponent.userEmp;
+  isEmployer = SignUpPageComponent.userEmpr;
+
+  job = {
+    title: '',
+    name: '',
+    desc: '',
+  };
 
   constructor(private frontEndService: FrontEndService) {}
 
@@ -25,6 +33,22 @@ export class UserAccPageComponent implements OnInit {
       },
       (error) => {
         console.log(error);
+      }
+    );
+  }
+
+  postJob(): void {
+    const data = {
+      title: this.job.title,
+      name: this.job.name,
+      desc: this.job.desc,
+    };
+    this.frontEndService.createJob(data).subscribe(
+      (response) => {
+        console.log(response);
+      },
+      (err) => {
+        console.log(err);
       }
     );
   }

@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FrontEndService } from 'src/app/services/front-end.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-sign-up-page',
@@ -7,6 +8,11 @@ import { FrontEndService } from 'src/app/services/front-end.service';
   styleUrls: ['./sign-up-page.component.scss'],
 })
 export class SignUpPageComponent implements OnInit {
+  static username: any;
+  static signIn: boolean;
+  static userEmp: boolean;
+  static userEmpr: boolean;
+
   person = {
     name: '',
     age: 0,
@@ -24,7 +30,10 @@ export class SignUpPageComponent implements OnInit {
   };
   empr = false;
 
-  constructor(private frontEndService: FrontEndService) {}
+  constructor(
+    private frontEndService: FrontEndService,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {}
 
@@ -39,17 +48,23 @@ export class SignUpPageComponent implements OnInit {
   }
 
   saveEmp(): void {
-    var empSkills: String[] = [];
-    for (let i = 0; i < this.employee.skills.length; i++) {
-      const element = this.employee.skills[i];
-      empSkills.unshift(element);
-    }
+    var empskl = this.employee.skills.length.toString();
+    var empSkills = empskl.split(', ');
+    // for (let i = 0; i < this.employee.skills.length; i++) {
+    //   const element = this.employee.skills[i];
+    //   empSkills.unshift(element);
+    // }
+    
+    SignUpPageComponent.username = this.person.name;
+    SignUpPageComponent.signIn = true;
+    SignUpPageComponent.userEmp = true;
+    SignUpPageComponent.userEmpr = false;
     const data = {
       name: this.person.name,
       age: this.person.age,
       email: this.person.email,
       password: this.person.password,
-      skills: empSkills.reverse(),
+      skills: empSkills,
     };
 
     this.frontEndService.createEmp(data).subscribe(
@@ -60,9 +75,14 @@ export class SignUpPageComponent implements OnInit {
         console.log(err);
       }
     );
+    this.router.navigate(['/home']);
   }
 
   saveEmpr(): void {
+    SignUpPageComponent.username = this.person.name;
+    SignUpPageComponent.signIn = true;
+    SignUpPageComponent.userEmpr = true;
+    SignUpPageComponent.userEmp = false;
     const data = {
       name: this.person.name,
       age: this.person.age,
@@ -79,6 +99,6 @@ export class SignUpPageComponent implements OnInit {
         console.log(err);
       }
     );
+    this.router.navigate(['/home']);
   }
-
 }

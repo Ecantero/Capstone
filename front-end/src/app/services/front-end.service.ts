@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const baseUrl = 'http://localhost:3000/api';
+const baseUrl = 'http://localhost:3000/#';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FrontEndService {
   constructor(private http: HttpClient) {}
+  
+  // baseUrl = '/api';
 
   getAll(): Observable<any> {
     return this.http.get(`${baseUrl}/search`);
@@ -36,6 +38,10 @@ export class FrontEndService {
 
   createEmpr(data: any): Observable<any> {
     return this.http.post(`${baseUrl}/signUp/empr`, data);
+  }
+
+  createJob(data: any): Observable<any> {
+    return this.http.post(`${baseUrl}/jobPost`, data);
   }
 
   update(id: any, data: any): Observable<any> {

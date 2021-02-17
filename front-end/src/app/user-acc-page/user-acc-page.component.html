@@ -2,13 +2,44 @@
 
 <div>
   hello
-  <label for="name">{{user.name}}</label>
-  <label for="email">{{user.email}}</label>
-  <label for="age">{{user.age}}</label>
-  <!-- <div *ngIf="emp">
-    <label for="skills">{{employee.skills}}</label>
+  <label for="name">{{ user.name }}</label>
+  <label for="email">{{ user.email }}</label>
+  <label for="age">{{ user.age }}</label>
+  <div *ngIf="isEmployee">
+    <label for="skills">{{ user.skills }}</label>
   </div>
-  <div *ngIf="empr">
-    <label for="company">{{employer.company}}</label>
-  </div> -->
+  <div *ngIf="isEmployer">
+    <label for="company">{{ user.company }}</label>
+  </div>
+  <div *ngIf="isEmployer">
+    <form>
+      <div class="row mb-3">
+        <label for="name" class="col-sm-2 col-form-label">Title</label>
+        <div class="col-sm-10">
+          <input
+            type="text"
+            class="form-control"
+            [(ngModel)]="job.title"
+            name="title"
+            required
+          />
+        </div>
+      </div>
+      <div class="row mb-3">
+        <label for="name" class="col-sm-2 col-form-label"
+          >Job Description</label
+        >
+        <div class="col-sm-10">
+          <textarea
+            class="form-control"
+            [(ngModel)]="job.desc"
+            name="desc"
+            cols="30"
+            rows="1"
+            required
+          ></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
 </div>

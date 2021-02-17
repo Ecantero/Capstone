@@ -12,10 +12,12 @@ export class JobListingsPageComponent implements OnInit {
 
   constructor(private frontEndService: FrontEndService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.retrieveJobList();
+  }
 
   retrieveJobList(): void {
-    this.frontEndService.getAll().subscribe(
+    this.frontEndService.getAllJobs().subscribe(
       (data) => {
         this.jobs = data;
         console.log(data);

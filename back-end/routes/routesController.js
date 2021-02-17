@@ -21,6 +21,7 @@ module.exports = (appRoute) => {
   router.get("/home", routes.home);
 
   router.get("/user/:id", checkAuth, routes.userAcc);
+  router.post("/jobPost", routes.createJob);
 
   router.get("/edit/:id", routes.edit);
   router.put("/edit/:id", routes.editEmployee);

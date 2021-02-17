@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { SignUpPageComponent } from './sign-up-page/sign-up-page.component';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +8,5 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'front-end';
+  signedIn = SignUpPageComponent.signIn;
 }

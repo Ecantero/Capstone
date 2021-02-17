@@ -7,13 +7,13 @@ const path = require("path");
 const app = express();
 
 var corsOp = {
-  origin: "http://localhost:4200",
+  origin: "https://localhost:4200",
 };
 
 const pth = __dirname + "/views/";
 
-// app.set("views", pth);
-// app.use(express.static(pth));
+app.set("views", pth);
+app.use(express.static(pth));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors(corsOp));
@@ -31,8 +31,8 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  // res.sendFile(pth + "index.html");
-  res.json({ message: "Backend Serve is Enabled" });
+  res.sendFile(pth + "index.html");
+  // res.json({ message: "Backend Serve is Enabled" });
 });
 
 require("./routes/routesController")(app)
