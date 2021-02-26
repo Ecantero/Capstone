@@ -23,7 +23,7 @@
     <div class="list-group">
       <div class="list-group-item" *ngFor="let job of jobs; let i = index">
         {{ job.title }}
-        {{ job.name }}
+        <a>{{ job.name }}</a>
         {{ job.desc }}
       </div>
     </div>

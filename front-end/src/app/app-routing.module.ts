@@ -6,6 +6,7 @@ import { JobListingsPageComponent } from './job-listings-page/job-listings-page.
 import { SearchPageComponent } from './search-page/search-page.component';
 import { SignUpPageComponent } from './sign-up-page/sign-up-page.component';
 import { UserAccPageComponent } from './user-acc-page/user-acc-page.component';
+import { UserResultPageComponent } from './user-result-page/user-result-page.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
@@ -15,6 +16,7 @@ const routes: Routes = [
   {path: 'signUp', component: SignUpPageComponent},
   {path: 'search', component: SearchPageComponent},
   {path: 'userAcc', component: UserAccPageComponent},
+  {path: 'user/:id', component: UserResultPageComponent},
 ];
 
 @NgModule({

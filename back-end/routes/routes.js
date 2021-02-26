@@ -55,13 +55,6 @@ employerSchema.method("toJSON", function () {
 
 var Employer = mongoose.model("employer_collection", employerSchema);
 
-var peopleSchema = mongoose.Schema({
-  employee: employeeSchema,
-  employer: employerSchema,
-});
-
-var People = mongoose.model("emp_empr_collection", peopleSchema);
-
 var jobList = mongoose.Schema({
   title: String,
   desc: String,
@@ -72,7 +65,6 @@ var Jobs = mongoose.model("jobs_list_collection", jobList);
 
 exports.checkAccess = (req, res) => {
   if (req.body.name == "" || req.body.password == null) {
-    res.redirect("/home");
     req.session.msg = "Must enter all the appropriate information";
   }
   let userName = req.body.name;
@@ -88,10 +80,8 @@ exports.checkAccess = (req, res) => {
       };
       allowed = userName;
       req.session.msg = "Succes";
-      res.redirect("/home");
     } else {
       req.session.err = "No such user exists, create the account here";
-      res.redirect("/signUp");
     }
   });
 };
@@ -125,22 +115,29 @@ exports.jobListings = (req, res) => {
 };
 
 exports.search = (req, res) => {
-  // const name = req.query.name;
-  // var condition = name
-  //   ? { name: { $regex: new RegExp(title), $options: "i" } }
-  //   : {};
-
-  Employee.find((err, person) => {
-    res.send(person);
-  }).catch((err) => {
-    // res.status(500).send({
-    //   message: err.message || "Error has occurred",
-    // });
-    console.log(err);
-  });
-  res.render("search", {
-    title: "Search",
-  });
+  console.log(req.body.id);
+  if (req.body.id) {
+    const name = req.body.id;
+    Employee.findById(name).then(data => {
+      if (!data) {
+        res.status(404).send({message: "User Not Found"});
+      } else {
+        res.send(data);
+      }
+    })
+    .catch(err => {
+      res.status(500).send({message: "Error in retrieving User"});
+    });
+  } else {
+    Employee.find((err, person) => {
+      res.send(person);
+    }).catch((err) => {
+      console.log(err);
+    });
+  }
+  // res.render("search", {
+  //   title: "Search",
+  // });
 };
 
 exports.logout = (req, res) => {
@@ -181,17 +178,10 @@ exports.createEmp = (req, res) => {
     console.log(emp);
     console.log(req.body.name + " added");
   });
-  const person = new People({
-    employee: employee,
-  });
-  person.save((err, person) => {
-    if (err) return console.error(err);
-    console.log(person);
-    console.log(req.body.name + " is added to the main collection");
-  });
 };
 
 exports.createEmpr = (req, res) => {
+  console.log("this call is reached");
   var pass = hashPassword(req.body.password);
   const employer = new Employer({
     name: req.body.name,
@@ -200,17 +190,10 @@ exports.createEmpr = (req, res) => {
     password: pass,
     company: req.body.company,
   });
+  console.log(employer);
   employer.save((err, person) => {
     if (err) return console.error(err);
     console.log(req.body.name + " added");
-  });
-  const person = new People({
-    employer: employer,
-  });
-  person.save((err, person) => {
-    if (err) return console.error(err);
-    console.log(person);
-    console.log(req.body.name + " is added to the main collection");
   });
 };
 
@@ -218,13 +201,13 @@ exports.createJob = (req, res) => {
   const job = new Jobs({
     title: req.body.title,
     desc: req.body.desc,
-    name: req.body.name
+    name: req.body.name,
   });
   job.save((err, jobPost) => {
     if (err) return console.error(err);
     console.log(req.body.name + " added");
   });
-}
+};
 
 exports.findUser = (req, res) => {
   const id = req.params.id;

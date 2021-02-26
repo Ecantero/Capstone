@@ -2,15 +2,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-const baseUrl = 'http://localhost:3000/#';
+const baseUrl = 'http://localhost:3000';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FrontEndService {
   constructor(private http: HttpClient) {}
-  
-  // baseUrl = '/api';
 
   getAll(): Observable<any> {
     return this.http.get(`${baseUrl}/search`);
@@ -33,10 +31,16 @@ export class FrontEndService {
   }
 
   createEmp(data: any): Observable<any> {
+    console.log("create employee method is called");
+    console.log(`${baseUrl}/signUp/emp`);
+    console.log(`The data being sent to this url: ${data.name}`);
     return this.http.post(`${baseUrl}/signUp/emp`, data);
   }
 
   createEmpr(data: any): Observable<any> {
+    console.log("create employer method is called");
+    console.log(`${baseUrl}/signUp/empr`);
+    console.log(`The data being sent to this url: ${data.name}`);
     return this.http.post(`${baseUrl}/signUp/empr`, data);
   }
 

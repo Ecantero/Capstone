@@ -18,11 +18,11 @@ export class SearchPageComponent implements OnInit {
 
   retrievePeople(): void {
     this.frontEndService.getAll().subscribe(
-      (data) => {
+      (data: any) => {
         this.people = data;
         console.log(data);
       },
-      (error) => {
+      (error: any) => {
         console.log(error);
       }
     );

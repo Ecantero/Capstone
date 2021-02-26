@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
 })
 export class SignUpPageComponent implements OnInit {
   static username: any;
-  static signIn: boolean;
+  static signIn: boolean = false;
   static userEmp: boolean;
   static userEmpr: boolean;
 
@@ -35,7 +35,9 @@ export class SignUpPageComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    console.log(`signed in state: ${SignUpPageComponent.signIn}`);
+  }
 
   isEmp(): void {
     this.emp = true;
@@ -48,17 +50,14 @@ export class SignUpPageComponent implements OnInit {
   }
 
   saveEmp(): void {
-    var empskl = this.employee.skills.length.toString();
+    var empskl = this.employee.skills.toString();
     var empSkills = empskl.split(', ');
-    // for (let i = 0; i < this.employee.skills.length; i++) {
-    //   const element = this.employee.skills[i];
-    //   empSkills.unshift(element);
-    // }
-    
+
     SignUpPageComponent.username = this.person.name;
     SignUpPageComponent.signIn = true;
     SignUpPageComponent.userEmp = true;
     SignUpPageComponent.userEmpr = false;
+
     const data = {
       name: this.person.name,
       age: this.person.age,
@@ -66,7 +65,15 @@ export class SignUpPageComponent implements OnInit {
       password: this.person.password,
       skills: empSkills,
     };
-
+    console.log(
+      `username: ${SignUpPageComponent.username}, 
+      is Signed in: ${SignUpPageComponent.signIn}, 
+      is employee: ${SignUpPageComponent.userEmp},
+      is employer: ${SignUpPageComponent.userEmpr}`
+    );
+    console.log(
+      `Employee name: ${data.name}, age: ${data.age}, email: ${data.email}, skills: ${data.skills}, password: ${data.password}`
+    );
     this.frontEndService.createEmp(data).subscribe(
       (response) => {
         console.log(response);
@@ -83,6 +90,7 @@ export class SignUpPageComponent implements OnInit {
     SignUpPageComponent.signIn = true;
     SignUpPageComponent.userEmpr = true;
     SignUpPageComponent.userEmp = false;
+
     const data = {
       name: this.person.name,
       age: this.person.age,
@@ -90,7 +98,13 @@ export class SignUpPageComponent implements OnInit {
       password: this.person.password,
       company: this.employer.company,
     };
-
+    console.log(
+      `username: ${SignUpPageComponent.username}, 
+      is Signed in: ${SignUpPageComponent.signIn}, 
+      is employee: ${SignUpPageComponent.userEmp},
+      is employer: ${SignUpPageComponent.userEmpr}`
+    );
+    console.log(data);
     this.frontEndService.createEmpr(data).subscribe(
       (response) => {
         console.log(response);

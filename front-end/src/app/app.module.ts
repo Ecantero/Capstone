@@ -11,6 +11,7 @@ import { UserAccPageComponent } from './user-acc-page/user-acc-page.component';
 import { JobListingsPageComponent } from './job-listings-page/job-listings-page.component';
 import { FormsModule } from "@angular/forms";
 import { HttpClientModule } from "@angular/common/http";
+import { UserResultPageComponent } from './user-result-page/user-result-page.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +21,8 @@ import { HttpClientModule } from "@angular/common/http";
     AboutPageComponent,
     SearchPageComponent,
     UserAccPageComponent,
-    JobListingsPageComponent
+    JobListingsPageComponent,
+    UserResultPageComponent
   ],
   imports: [
     BrowserModule,
