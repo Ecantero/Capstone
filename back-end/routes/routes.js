@@ -67,21 +67,23 @@ exports.checkAccess = (req, res) => {
   if (req.body.name == "" || req.body.password == null) {
     req.session.msg = "Must enter all the appropriate information";
   }
-  let userName = req.body.name;
+  let userEmail = req.body.email;
   let userPassword = req.body.password;
 
-  Employee.findOne({ name: userName }, (err, person) => {
-    if (err) return console.error(err);
+  console.log(userEmail);
+  console.log(userPassword);
+
+  Employer.findOne({ email: userEmail }, (err, person) => {
+    if (err) {
+      res.send({ msg: "no user exists" });
+      return console.error(err);
+    }
     let isPassMatch = bcrypt.compareSync(userPassword, person.password);
+    console.log(isPassMatch);
     if (isPassMatch) {
-      req.session.user = {
-        isAuthenticated: true,
-        username: req.body.name,
-      };
-      allowed = userName;
-      req.session.msg = "Succes";
+      res.send(person);
     } else {
-      req.session.err = "No such user exists, create the account here";
+      res.send({ msg: "incorrect password or email" });
     }
   });
 };
@@ -102,15 +104,26 @@ exports.about = (req, res) => {
 };
 
 exports.userAcc = (req, res) => {
-  res.render("userAcc", {
-    title: "User",
+  const userId = req.params.id;
+  console.log(userId);
+  Employer.findById(userId)
+  .then(
+    data => {
+      if (!data) {
+        res.send({msg: 'no user found'});
+      }
+      res.send(data);
+    }
+  ).catch((err) => {
+    console.log(err);
   });
 };
 
 exports.jobListings = (req, res) => {
-  //
-  res.render("jobListings", {
-    title: "JobListings",
+  Jobs.find((err, jobs) => {
+    res.send(jobs);
+  }).catch((err) => {
+    console.log(err);
   });
 };
 
@@ -118,16 +131,17 @@ exports.search = (req, res) => {
   console.log(req.body.id);
   if (req.body.id) {
     const name = req.body.id;
-    Employee.findById(name).then(data => {
-      if (!data) {
-        res.status(404).send({message: "User Not Found"});
-      } else {
-        res.send(data);
-      }
-    })
-    .catch(err => {
-      res.status(500).send({message: "Error in retrieving User"});
-    });
+    Employee.findById(name)
+      .then((data) => {
+        if (!data) {
+          res.status(404).send({ message: "User Not Found" });
+        } else {
+          res.send(data);
+        }
+      })
+      .catch((err) => {
+        res.status(500).send({ message: "Error in retrieving User" });
+      });
   } else {
     Employee.find((err, person) => {
       res.send(person);
@@ -205,7 +219,7 @@ exports.createJob = (req, res) => {
   });
   job.save((err, jobPost) => {
     if (err) return console.error(err);
-    console.log(req.body.name + " added");
+    console.log(jobPost + " is added");
   });
 };
 
@@ -240,7 +254,7 @@ exports.edit = (req, res) => {
   });
 };
 
-exports.editEmployee = (req, res) => {
+exports.editEmployer = (req, res) => {
   if (!req.body) {
     return res.status(400).send({
       message: "Data to update can not be empty!",
@@ -249,7 +263,7 @@ exports.editEmployee = (req, res) => {
 
   const id = req.params.id;
 
-  Employee.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
+  Employer.findByIdAndUpdate(id, req.body, { useFindAndModify: false })
     .then((data) => {
       if (!data) {
         res.status(404).send({

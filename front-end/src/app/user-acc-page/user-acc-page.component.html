@@ -2,19 +2,78 @@
 
 <div>
   hello
-  <label for="name">{{ user.name }}</label>
-  <label for="email">{{ user.email }}</label>
-  <label for="age">{{ user.age }}</label>
+  <p for="name">Name: {{ user.name }}</p>
+  <p for="email">Email: {{ user.email }}</p>
+  <p for="age">Age: {{ user.age }}</p>
   <div *ngIf="isEmployee">
-    <label for="skills">{{ user.skills }}</label>
+    <p for="skills">Skills: {{ user.skills }}</p>
   </div>
   <div *ngIf="isEmployer">
-    <label for="company">{{ user.company }}</label>
+    <p for="company">Company: {{ user.company }}</p>
+  </div>
+  <button
+    type="button"
+    class="btn btn-primary"
+    data-bs-toggle="modal"
+    data-bs-target="#editModal"
+  >
+    Edit
+  </button>
+  <div
+    class="modal fade"
+    id="editModal"
+    tabindex="-1"
+    aria-labelledby="editLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="editLabel">Edit your account</h5>
+          <button
+            type="button"
+            class="btn-close"
+            data-bs-dismiss="modal"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div class="modal-body">
+          <div class="row mb-3">
+            <label for="name" class="col-sm-2 col-form-label">Name</label>
+            <div class="col-sm-10">
+              <input type="text" ([ngModel])="(person.name)" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="age" class="col-sm-2 col-form-label">Age</label>
+            <div class="col-sm-10">
+              <input type="number" ([ngModel])="(person.age)" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="email" class="col-sm-2 col-form-label">Email</label>
+            <div class="col-sm-10">
+              <input type="email" ([ngModel])="(person.email)" />
+            </div>
+          </div>
+          <div class="row mb-3">
+            <label for="password" class="col-sm-2 col-form-label"
+              >password</label
+            >
+            <div class="col-sm-10">
+              <input type="password" ([ngModel])="(person.password)" />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer"></div>
+      </div>
+    </div>
   </div>
   <div *ngIf="isEmployer">
-    <form>
-      <div class="row mb-3">
-        <label for="name" class="col-sm-2 col-form-label">Title</label>
+    <div>
+      <h2>Create a new job post</h2>
+      <div class="mb-3 row">
+        <label for="title" class="col-sm-2 col-form-label">Title</label>
         <div class="col-sm-10">
           <input
             type="text"
@@ -25,10 +84,8 @@
           />
         </div>
       </div>
-      <div class="row mb-3">
-        <label for="name" class="col-sm-2 col-form-label"
-          >Job Description</label
-        >
+      <div class="mb-3 row">
+        <label for="desc" class="col-sm-2 col-form-label">description</label>
         <div class="col-sm-10">
           <textarea
             class="form-control"
@@ -40,6 +97,9 @@
           ></textarea>
         </div>
       </div>
-    </form>
+      <p [(ngModel)]="job.name" hidden>{{ user.name }}</p>
+      <button (click)="postJob()" class="btn btn-primary">Post Job</button>
+      <p *ngIf="complete">{{ msg }}</p>
+    </div>
   </div>
 </div>

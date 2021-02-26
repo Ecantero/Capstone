@@ -10,6 +10,10 @@ const baseUrl = 'http://localhost:3000';
 export class FrontEndService {
   constructor(private http: HttpClient) {}
 
+  userLogin(data: any): Observable<any> {
+    return this.http.post(`${baseUrl}/login`, data);
+  }
+
   getAll(): Observable<any> {
     return this.http.get(`${baseUrl}/search`);
   }

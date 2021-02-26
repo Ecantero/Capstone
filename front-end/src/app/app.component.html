@@ -18,17 +18,17 @@
           <a class="nav-link" routerLink="home">Home</a>
           <a class="nav-link" routerLink="about">About</a>
           <a class="nav-link" routerLink="jobListings">Job Listings</a>
-          <a class="nav-link" routerLink="search">Search</a>
-          <a class="nav-link" routerLink="signUp">Sign up</a>
+          <a class="nav-link" routerLink="search">Search</a>]
           <div *ngIf="signedIn; else logIn">
             <a class="nav-link" routerLink="userAcc">User Account</a>
           </div>
           <ng-template #logIn>
+            <a class="nav-link" routerLink="signUp">Sign up</a>
             <button
               type="button"
               class="btn btn-primary"
               data-bs-toggle="modal"
-              data-bs-target="#exampleModal"
+              data-bs-target="#loginModal"
             >
               Login
             </button>
@@ -81,6 +81,11 @@
                         />
                       </div>
                     </div>
+                    <div *ngIf="err" class="row mb-3">
+                      <p class="text-danger">
+                        {{ msg }}
+                      </p>
+                    </div>
                   </div>
                   <div class="modal-footer">
                     <button
@@ -90,7 +95,13 @@
                     >
                       Close
                     </button>
-                    <button type="button" class="btn btn-primary">Login</button>
+                    <button
+                      type="button"
+                      class="btn btn-primary"
+                      (click)="login()"
+                    >
+                      Login
+                    </button>
                   </div>
                 </div>
               </div>

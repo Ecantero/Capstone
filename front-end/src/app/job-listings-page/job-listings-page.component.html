@@ -22,9 +22,9 @@
     <h4>Jobs Available</h4>
     <div class="list-group">
       <div class="list-group-item" *ngFor="let job of jobs; let i = index">
-        {{ job.title }}
-        <a>{{ job.name }}</a>
-        {{ job.desc }}
+        <p>Title: {{ job.title }}</p>
+        <p><a>{{ job.name }}</a></p>
+        <p>Description: {{ job.desc }}</p>
       </div>
     </div>
   </div>

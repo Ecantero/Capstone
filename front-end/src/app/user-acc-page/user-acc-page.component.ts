@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { FrontEndService } from 'src/app/services/front-end.service';
 import { SignUpPageComponent } from '../sign-up-page/sign-up-page.component';
 
@@ -12,6 +13,9 @@ export class UserAccPageComponent implements OnInit {
   name = SignUpPageComponent.username;
   isEmployee = SignUpPageComponent.userEmp;
   isEmployer = SignUpPageComponent.userEmpr;
+  msg = '';
+  complete = false;
+  id = this.route.snapshot.paramMap.get('id');
 
   job = {
     title: '',
@@ -19,14 +23,31 @@ export class UserAccPageComponent implements OnInit {
     desc: '',
   };
 
-  constructor(private frontEndService: FrontEndService) {}
+  person = {
+    name: '',
+    age: 0,
+    email: '',
+    password: '',
+  };
 
-  ngOnInit(): void {
-    this.retrievePerson();
+  emp = {
+    company: '',
   }
 
-  retrievePerson(): void {
-    this.frontEndService.findByName(this.name).subscribe(
+  constructor(
+    private frontEndService: FrontEndService,
+    private route: ActivatedRoute
+  ) {}
+
+  ngOnInit(): void {
+    this.retrievePerson(this.id);
+    console.log(this.id);
+    this.isEmployer = true;
+    console.log(this.isEmployer);
+  }
+
+  retrievePerson(id: any): void {
+    this.frontEndService.get(id).subscribe(
       (data) => {
         this.user = data;
         console.log(data);
@@ -35,6 +56,16 @@ export class UserAccPageComponent implements OnInit {
         console.log(error);
       }
     );
+  }
+
+  updateUser(): void {
+    const data = {
+      name: this.person.name,
+      email: this.person.email,
+      password: this.person.password,
+      age: this.person.age,
+      company: this.emp.company,
+    }
   }
 
   postJob(): void {
@@ -46,6 +77,7 @@ export class UserAccPageComponent implements OnInit {
     this.frontEndService.createJob(data).subscribe(
       (response) => {
         console.log(response);
+        this.msg = "job posted";
       },
       (err) => {
         console.log(err);

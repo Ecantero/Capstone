@@ -64,8 +64,8 @@ app.get("/home", routes.home);
 app.get("/user/:id", routes.userAcc);
 app.post("/jobPost", urlencodedParser, routes.createJob);
 
-app.get("/edit/:id", routes.edit);
-app.put("/edit/:id", routes.editEmployee);
+// app.get("/edit/:id", routes.edit);
+app.put("/edit/:id", routes.editEmployer);
 
 app.get("/signUp", routes.signUp);
 app.post("/signUp/emp", urlencodedParser, routes.createEmp);

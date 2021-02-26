@@ -15,7 +15,7 @@ const routes: Routes = [
   {path: 'jobListings', component: JobListingsPageComponent},
   {path: 'signUp', component: SignUpPageComponent},
   {path: 'search', component: SearchPageComponent},
-  {path: 'userAcc', component: UserAccPageComponent},
+  {path: 'userAcc/:id', component: UserAccPageComponent},
   {path: 'user/:id', component: UserResultPageComponent},
 ];
 
